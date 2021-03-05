@@ -1,88 +1,62 @@
 console.log(`Hi! I'm main.js!`)
 
-getCSS.onclick = () => {
+AJAX = (method, FileUrl, func) => {
     const request = new XMLHttpRequest()
-    request.open("GET", "./style.css")
-    request.onreadystatechange = () => {
-        // 判断是否下载完成，是否状态码为 200
+    request.open(method, FileUrl)
+    request.onreadystatechange = () =>{
         if (request.readyState === 4 && request.status === 200) {
-            // 创建 style 标签
-            const style = document.createElement('style')
-            // 写入 style 内容
-            style.innerHTML = request.response
-            // 插入 style 到 head
-            document.head.appendChild(style)
+            func(request)
         }
     }
     request.send()
 }
 
-getJS.onclick = () => {
-    const request = new XMLHttpRequest()
-    request.open("GET", "./main.js")
-    request.onreadystatechange = () => {
-        if (request.readyState === 4 && request.status === 200) {
-            console.log(request.response)
+CSSfunc = (request) =>{
+    // 创建 style 标签
+    const style = document.createElement('style')
+    // 写入 style 内容
+    style.innerHTML = request.response
+    // 插入 style 到 head
+    document.head.appendChild(style)
+}
+getCSS.onclick = () => AJAX("GET", "./style.css", CSSfunc)
+
+JSfunc = (request) =>{
+    console.log(request.response)
             const script = document.createElement("script")
             script.innerHTML = request.response
             document.body.appendChild(script)
-        }
-    }
-    request.send()
 }
+getJS.onclick = () => AJAX("GET", "./main.js", JSfunc)
 
-getHTML.onclick = () => {
-    const request = new XMLHttpRequest()
-    request.open("GET", "./2.html")
-    request.onreadystatechange = () => {
-        if (request.readyState === 4 && request.status === 200){
-            const div = document.createElement('div')
-            div.innerHTML = request.response
-            document.body.appendChild(div)
-        }
-    }
-    request.send()
+HTMLfunc = (request) =>{
+    const div = document.createElement('div')
+    div.innerHTML = request.response
+    document.body.appendChild(div)
 }
+getHTML.onclick = () => AJAX("GET", "./2.html", HTMLfunc)
 
-getXML.onclick = () => {
-    const request = new XMLHttpRequest()
-    request.open("GET", "./3.xml")
-    request.onreadystatechange = () => {
-        if (request.readyState === 4 && request.status == 200){
-            console.log(request.responseXML)
-            const dom = request.responseXML
-            const text = dom.getElementsByTagName('warning')[0].textContent
-        }
-    }
-    request.send()
+XMLfunc = (request) =>{
+    console.log(request.responseXML)
+    const dom = request.responseXML
+    const text = dom.getElementsByTagName('warning')[0].textContent
 }
+getXML.onclick = () => AJAX("GET", "./3.xml", XMLfunc)
 
-getJSON.onclick = () => {
-    const request = new XMLHttpRequest()
-    request.open("GET", "./4.json")
-    request.onreadystatechange = () => {
-        if (request.readyState === 4 && request.status === 200){
-            const abool = JSON.parse(request.response)
-            myName.textContent = abool.name
-        }
-    }
-    request.send()
+JSONfunc = (request) =>{
+    const abool = JSON.parse(request.response)
+    myName.textContent = abool.name
 }
+getJSON.onclick = () => AJAX("GET", "./4.json", JSONfunc)
 
 let n = 1
-getPage.onclick = () => {
-    const request = new XMLHttpRequest()
-    request.open("GET", `./page${n + 1}`)
-    request.onreadystatechange = () => {
-        if (request.readyState === 4 && request.status == 200){
-            const array = JSON.parse(request.response)
-            array.forEach(item => {
-                const Li = document.createElement("li")
-                Li.textContent = item.id
-                xxx.appendChild(Li)
-            })
-            n++
-        }
-    }
-    request.send()
+Pagefunc = (request) =>{
+    const array = JSON.parse(request.response)
+    array.forEach(item => {
+        const Li = document.createElement("li")
+        Li.textContent = item.id
+        xxx.appendChild(Li)
+    })
+    n++
 }
+getPage.onclick = () => AJAX("GET", `./page${n + 1}`, Pagefunc)
